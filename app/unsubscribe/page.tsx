@@ -1,14 +1,24 @@
-// Dans votre fichier ./app/unsubscribe/page.tsx
-
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-const UnsubscribePage = () => {
+// Composant de chargement
+const LoadingSpinner = () => (
+  <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Chargement...</p>
+      </div>
+    </div>
+  </div>
+);
+
+// Composant principal qui utilise useSearchParams
+const UnsubscribeContent = () => {
   const searchParams = useSearchParams();
-  // Correction : vérifier si searchParams existe avant d'appeler .get()
-  const email = searchParams?.get("email") || "";
+  const email = searchParams ? searchParams.get("email") || "" : "";
   
   const [unsubscribed, setUnsubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -35,12 +45,10 @@ const UnsubscribePage = () => {
       if (response.ok) {
         setUnsubscribed(true);
       } else {
-        // Utiliser _error si la variable n'est pas utilisée
         const errorData = await response.json();
         setError(errorData.message || 'Erreur lors du désabonnement');
       }
     } catch {
-      // Supprimer le paramètre error inutilisé
       setError('Erreur réseau');
     } finally {
       setLoading(false);
@@ -92,6 +100,15 @@ const UnsubscribePage = () => {
         )}
       </div>
     </div>
+  );
+};
+
+// Composant principal avec Suspense (obligatoire pour Next.js 15)
+const UnsubscribePage = () => {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <UnsubscribeContent />
+    </Suspense>
   );
 };
 
