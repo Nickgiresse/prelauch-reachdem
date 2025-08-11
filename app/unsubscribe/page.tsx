@@ -1,19 +1,22 @@
-"use client";
-import { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+// Dans votre fichier ./app/unsubscribe/page.tsx
+
+'use client';
+
+import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 
 const UnsubscribePage = () => {
   const searchParams = useSearchParams();
-  const email = searchParams.get("email");
+  // Correction : vérifier si searchParams existe avant d'appeler .get()
+  const email = searchParams?.get("email") || "";
+  
   const [unsubscribed, setUnsubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleUnsubscribe = async () => {
     if (!email) {
-      setError("Email non trouvé");
+      setError("Aucun email trouvé dans les paramètres");
       return;
     }
 
@@ -21,141 +24,75 @@ const UnsubscribePage = () => {
     setError("");
 
     try {
-      const response = await fetch("/api/unsubscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await fetch('/api/unsubscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email }),
       });
 
       if (response.ok) {
         setUnsubscribed(true);
       } else {
-        setError("Erreur lors du désabonnement");
+        // Utiliser _error si la variable n'est pas utilisée
+        const errorData = await response.json();
+        setError(errorData.message || 'Erreur lors du désabonnement');
       }
-    } catch (_error) {
-      setError("Erreur de connexion");
+    } catch {
+      // Supprimer le paramètre error inutilisé
+      setError('Erreur réseau');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-orange-100 flex items-center justify-center p-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full"
-      >
-        <div className="text-center">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6"
-          >
-            <svg
-              className="w-8 h-8 text-orange-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-              />
-            </svg>
-          </motion.div>
-
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Se désabonner
-          </h1>
-          
-          {email && (
-            <p className="text-gray-600 mb-6">
-              Email: <span className="font-semibold">{email}</span>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
+        <h1 className="text-2xl font-bold text-center mb-6">
+          Désabonnement
+        </h1>
+        
+        {!unsubscribed ? (
+          <div>
+            <p className="text-gray-600 mb-4">
+              Êtes-vous sûr de vouloir vous désabonner de notre newsletter ?
             </p>
-          )}
-
-          {!unsubscribed ? (
-            <>
-              <p className="text-gray-700 mb-8 leading-relaxed">
-                Êtes-vous sûr de vouloir vous désabonner de notre newsletter ? 
-                Vous ne recevrez plus nos actualités et contenus exclusifs.
+            {email && (
+              <p className="text-sm text-gray-500 mb-4">
+                Email: {email}
               </p>
-              
-              {error && (
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="text-red-600 mb-4 text-sm"
-                >
-                  {error}
-                </motion.p>
-              )}
-
-              <div className="flex gap-4">
-                <Button
-                  onClick={handleUnsubscribe}
-                  disabled={loading}
-                  className="flex-1 bg-orange-600 hover:bg-orange-700"
-                >
-                  {loading ? "Désabonnement..." : "Se désabonner"}
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={() => window.history.back()}
-                  disabled={loading}
-                  className="flex-1"
-                >
-                  Annuler
-                </Button>
+            )}
+            
+            {error && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {error}
               </div>
-            </>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
+            )}
+            
+            <button
+              onClick={handleUnsubscribe}
+              disabled={loading || !email}
+              className="w-full bg-red-600 text-white py-2 px-4 rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Désabonnement réussi !
-              </h2>
-              
-              <p className="text-gray-700 mb-6">
-                Vous avez été désabonné avec succès de notre newsletter.
-                Vous ne recevrez plus nos emails.
-              </p>
-              
-              <Button
-                onClick={() => window.location.href = "/"}
-                className="bg-orange-600 hover:bg-orange-700"
-              >
-               {" Retour à l'accueil"}
-              </Button>
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
+              {loading ? 'Désabonnement...' : 'Me désabonner'}
+            </button>
+          </div>
+        ) : (
+          <div className="text-center">
+            <div className="text-green-600 text-4xl mb-4">✓</div>
+            <h2 className="text-xl font-semibold text-green-600 mb-2">
+              Désabonnement réussi
+            </h2>
+            <p className="text-gray-600">
+              Vous avez été désabonné avec succès de notre newsletter.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-export default UnsubscribePage; 
+export default UnsubscribePage;
