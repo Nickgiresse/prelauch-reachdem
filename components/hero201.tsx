@@ -1,6 +1,6 @@
 "use client";
 import { TextShimmer } from '@/components/motion-primitives/text-shimmer';
-
+import Image from 'next/image';
 import { Newletter } from "@/components/newletter"
 import { motion } from "framer-motion";
 
@@ -52,7 +52,7 @@ const Hero201 = () => {
           transition={{ ease: "easeInOut", duration: 0.6 }}
           className="w-240 absolute -right-80 -top-80 -z-10 hidden h-full items-center justify-center md:flex"
         >
-          <img
+          <Image
             className="infinite absolute w-full rotate-12 animate-[spin_15s_linear_infinite] dark:invert"
             src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/illustrations/tokyo-solar-system-around-a-smiley.svg"
             alt=""
@@ -64,7 +64,7 @@ const Hero201 = () => {
           transition={{ ease: "easeInOut", duration: 0.6 }}
           className="md:w-240 -bottom-80 -left-80 -z-10 -mb-24 mt-32 flex h-full w-full items-center justify-center md:absolute"
         >
-          <img
+          <Image
             className="infinite absolute w-full rotate-12 animate-[spin_15s_linear_infinite] dark:invert"
             src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/illustrations/tokyo-solar-system-around-a-smiley.svg"
             alt=""

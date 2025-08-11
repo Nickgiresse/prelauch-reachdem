@@ -52,7 +52,7 @@ const NewsletterWelcome = (props: { name?: string; unsubscribeLink: string }) =>
               </Text>
 
               <Text className="text-gray-800 text-[16px] font-semibold m-0">
-                L'équipe Links By ReachDem
+                {"L'équipe Links By ReachDem"}
               </Text>
             </Section>
 

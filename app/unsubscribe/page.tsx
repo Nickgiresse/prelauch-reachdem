@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -32,7 +32,7 @@ const UnsubscribePage = () => {
       } else {
         setError("Erreur lors du désabonnement");
       }
-    } catch (error) {
+    } catch (_error) {
       setError("Erreur de connexion");
     } finally {
       setLoading(false);
@@ -148,7 +148,7 @@ const UnsubscribePage = () => {
                 onClick={() => window.location.href = "/"}
                 className="bg-orange-600 hover:bg-orange-700"
               >
-                Retour à l'accueil
+               {" Retour à l'accueil"}
               </Button>
             </motion.div>
           )}
